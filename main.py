@@ -34,6 +34,12 @@ class Handler(webapp2.RequestHandler):
     def render(self,template,**kw):
         self.write(self.render_str(template,**kw))
 
+#BLOG DATABASE SKELETON
+class BlogPosts(db.Model):
+    """ File data skeleton for blogs  """
+    title = db.StringProperty(required = True)
+    body = db.StringProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
 
 #DEFAULT MAIN HOME PAGE
 class MainHandler(Handler):
@@ -51,12 +57,18 @@ class MainHandler(Handler):
         #includes a header size of post title **That is a permalink to posts
         #includes the text of the post below (all?)
         #single empty line between each page 'item'
-class MainBlogHandler(Handler):
+class BlogHandler(Handler):
     """ Handles requests coming in to '/blog'
         e.g. www.build-a-blog.com/blog
     """
+    # def get(self):
+    #     self.render("blog.html")
+    def render_blog(self, title="", body="", error=""):
+        blogentries = db.GqlQuery("SELECT * FROM BlogPosts ORDER BY created DESC LIMIT 5")
+        self.render("blog.html", title=title, body=body, error=error, blogentries=blogentries)
+
     def get(self):
-        self.render("blog.html")
+        self.render_blog()
 
 
 #SAMPLE DEFINED NEW POST PAGE
@@ -87,6 +99,8 @@ class NewPostHandler(Handler):
 
         if title and body:
             ##input to database
+            blogentry = BlogPosts(title=title, body=body)
+            blogentry.put()
             self.redirect("/blog")
         else:
             error = "Both Title and Body need entries!"
@@ -95,6 +109,6 @@ class NewPostHandler(Handler):
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
-    ('/blog', MainBlogHandler),
+    ('/blog', BlogHandler),
     ('/newpost', NewPostHandler)
 ], debug=True)

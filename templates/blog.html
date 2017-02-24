@@ -4,15 +4,26 @@
         <h1>Recent Entries</h1>
         <hr>
 
-[a list of 5 most recent here]
+{% for blogentry in blogentries %}
+    <div class="blogentry">
+        <div class="blogtitle"><a href=/blog/{{blogentry.key().id()}}>{{blogentry.title}}</a></div>
+            <pre class="blogbody">{{blogentry.body}}</pre>
+        </div>
+{% endfor %}
+
         <hr>
         <table>
-            <tr>
-            <td>
-        <form method="get" action="/newpost">
-            <input type="submit" value="Make a New Post">
-        </form>
+            <tr><td>
+                <form method="get" action="/blog">
+                    <input type="submit" value="Reload">
+                </form>
             </td>
-            </tr>
-        </table>
+
+            <td>
+                <form method="get" action="/newpost">
+                    <input type="submit" value="Make a New Post">
+                </form>
+            </td>
+        </tr>
+    </table>
 {% endblock %}
