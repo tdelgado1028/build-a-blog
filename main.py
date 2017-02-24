@@ -40,21 +40,9 @@ class MainHandler(Handler):
     """ Handles requests coming in to '/' (the root of our site)
         e.g. www.build-a-blog.com/
     """
-    def render_front(self, title="", body="", error=""):
-        self.render("front.html", title=title, body=body, error=error)
-
     def get(self):
         self.render("front.html")
 
-    def post(self):
-        title = self.request.get("title")
-        body = self.request.get("body")
-
-        if title and body:
-            self.write("valid")
-        else:
-            error = "both title and body need values"
-            self.render_front(error = error, title = title, body = body)
 
 
 #SAMPLE DEFINED BLOG PAGE
@@ -68,7 +56,7 @@ class MainBlogHandler(Handler):
         e.g. www.build-a-blog.com/blog
     """
     def get(self):
-        self.response.write('This will be blog page!')
+        self.render("blog.html")
 
 
 #SAMPLE DEFINED NEW POST PAGE
@@ -85,8 +73,24 @@ class NewPostHandler(Handler):
     """ Handles requests coming in to '/newpost'
         e.g. www.build-a-blog.com/newpost
     """
+    # def get(self):
+    #     self.response.write('This will be new post page!')
+    def render_newpost(self, title="", body="", error=""):
+        self.render("newpost.html", title=title, body=body, error=error)
+
     def get(self):
-        self.response.write('This will be new post page!')
+        self.render_newpost()
+
+    def post(self):
+        title = self.request.get("title")
+        body = self.request.get("body")
+
+        if title and body:
+            ##input to database
+            self.redirect("/blog")
+        else:
+            error = "Both Title and Body need entries!"
+            self.render_newpost(error = error, title = title, body = body)
 
 
 app = webapp2.WSGIApplication([
