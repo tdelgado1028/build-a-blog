@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form>
+    <h1>{{title}}</h1>
+    <hr>
+    <pre>{{body}}</pre>
+</form>
+
+
+
+    <hr>
+    <table>
+        <tr><td>
+    <form method="get" action="/blog">
+        <input type="submit" value="Go to Blog">
+    </form>
+        </td>
+        </tr>
+    </table>
+{% endblock %}

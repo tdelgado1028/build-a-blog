@@ -101,14 +101,28 @@ class NewPostHandler(Handler):
             ##input to database
             blogentry = BlogPosts(title=title, body=body)
             blogentry.put()
-            self.redirect("/blog")
+            self.redirect("/blog/%s" % blogentry.key().id())
         else:
             error = "Both Title and Body need entries!"
             self.render_newpost(error = error, title = title, body = body)
+
+#LOAD SINGLE POST THROUGH HERE
+class ViewPostHandler(Handler):
+    def get(self, id):
+        #pass #replace this with some code to handle the request
+        blogentry = BlogPosts.get_by_id(int(id))
+        title = blogentry.title
+        body = blogentry.body
+
+        t = jinja_env.get_template("singlepost.html")
+        content = t.render(body=body, title=title, id=id)
+
+        self.response.write(content)
 
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/blog', BlogHandler),
-    ('/newpost', NewPostHandler)
+    ('/newpost', NewPostHandler),
+    webapp2.Route('/blog/<id:\d+>', ViewPostHandler)
 ], debug=True)
